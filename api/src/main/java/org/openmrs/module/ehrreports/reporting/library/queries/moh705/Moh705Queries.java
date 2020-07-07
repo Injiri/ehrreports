@@ -61,7 +61,7 @@ public class Moh705Queries {
             + "INNER JOIN concept_name cn ON cn.concept_id = o.value_coded AND locale = 'en' AND cn.locale_preferred = 1 "
             + "INNER JOIN concept c ON c.concept_id=cn.concept_id "
             + "WHERE "
-            + " e.encounter_datetime BETWEEN DATE_ADD(:startDate, interval -1 DAY) AND DATE_ADD(:endDate, interval 1 DAY) "
+            + " e.encounter_datetime BETWEEN DATE_ADD(:startDate, interval 0 DAY) AND DATE_ADD(:endDate, interval 1 DAY) "
             + " AND o.value_coded IS NOT NULL "
             + " AND c.class_id IN(%d) "
             + " AND TIMESTAMPDIFF(YEAR, pe.birthdate, :endDate) < 5 "
@@ -78,7 +78,7 @@ public class Moh705Queries {
   public static String getMoh705bQuery(int classId) {
     String sql =
         "SELECT "
-            + " cn.name AS Diagnosis, "
+            + " cn.name AS Diagnosis, e.encounter_datetime, "
             + " SUM(CASE DAY(e.encounter_datetime) WHEN 1 THEN 1 ELSE 0 END) AS 1st, "
             + " SUM(CASE DAY(e.encounter_datetime) WHEN 2 THEN 1 ELSE 0 END) AS 2nd, "
             + " SUM(CASE DAY(e.encounter_datetime) WHEN 3 THEN 1 ELSE 0 END) AS 3rd, "
@@ -116,7 +116,7 @@ public class Moh705Queries {
             + "INNER JOIN concept_name cn ON cn.concept_id = o.value_coded AND locale = 'en' AND cn.locale_preferred = 1 "
             + "INNER JOIN concept c ON c.concept_id=cn.concept_id "
             + "WHERE "
-            + " e.encounter_datetime BETWEEN DATE_ADD(:startDate, interval -1 DAY) AND DATE_ADD(:endDate, interval 1 DAY) "
+            + " e.encounter_datetime >=:startDate AND e.encounter_datetime <=:endDate "
             + " AND o.value_coded IS NOT NULL "
             + " AND c.class_id IN(%d) "
             + " AND TIMESTAMPDIFF(YEAR, pe.birthdate, :endDate) >= 5 "
